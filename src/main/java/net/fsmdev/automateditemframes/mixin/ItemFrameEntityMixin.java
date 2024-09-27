@@ -41,9 +41,9 @@ public abstract class ItemFrameEntityMixin {
         if (blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity || blockEntity instanceof BarrelBlockEntity) {
             ChestType chestType = blockEntity instanceof BarrelBlockEntity ? ChestType.SINGLE : blockState.get(Properties.CHEST_TYPE);
             HashMap<String, Integer> itemStacks = new HashMap<>();
-            Direction facing = ChestBlock.getFacing(blockState);
             IntStream.range(0, ((LootableContainerBlockEntity) blockEntity).size()).mapToObj(i -> ((LootableContainerBlockEntity) blockEntity).getStack(i)).filter(currentItemStack -> !currentItemStack.isEmpty()).forEach(currentItemStack -> itemStacks.put(currentItemStack.getTranslationKey(), itemStacks.getOrDefault(currentItemStack.getTranslationKey(), 0) + currentItemStack.getCount()));
-            BlockEntity secondChest = itemFrame.getWorld().getBlockEntity(blockPos.add(facing.getVector()));
+            Direction facing = chestType == ChestType.SINGLE ? null : ChestBlock.getFacing(blockState);
+            BlockEntity secondChest = chestType == ChestType.SINGLE ? null : itemFrame.getWorld().getBlockEntity(blockPos.add(facing.getVector()));
             if (chestType != ChestType.SINGLE && (secondChest instanceof ChestBlockEntity || secondChest instanceof TrappedChestBlockEntity)) {
                 IntStream.range(0, ((LootableContainerBlockEntity) secondChest).size()).mapToObj(i -> ((LootableContainerBlockEntity) secondChest).getStack(i)).filter(currentItemStack -> !currentItemStack.isEmpty()).forEach(currentItemStack -> itemStacks.put(currentItemStack.getTranslationKey(), itemStacks.getOrDefault(currentItemStack.getTranslationKey(), 0) + currentItemStack.getCount()));
             }
